@@ -1,0 +1,59 @@
+name: Convert recipes flow
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-gradle-project:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout project sources
+      uses: actions/checkout@v3
+      with:
+         path: main
+    - name: Setup Gradle
+      uses: gradle/gradle-build-action@v2
+    - name: Initialize mandatory git config
+      run: |
+       cd main
+       git config user.name "GitHub Actions"
+       git config user.email noreply@github.com
+    - name: Checkout and run build with Gradle Wrapper
+      run: |
+        ls
+        cd main
+        git fetch --all --depth=1
+        cd convert-tool
+        ./gradlew standaloneJar
+        echo "Built converter"
+        cd ..
+        AGP_TO_GRADLE=("8.1.0:8.0" "8.0.0:8.0") 
+        for index in "${AGP_TO_GRADLE[@]}" ; do
+          AGP=${index%%:*}
+          GRADLE=${index#*:}
+          #branch name with major.minor, without .patch version
+          BRANCH="test-agp-"
+          BRANCH+=${AGP::-2}
+          BRANCH_DIR="../$BRANCH"
+          echo $BRANCH_DIR
+          mkdir $BRANCH_DIR
+          cp -r .git "$BRANCH_DIR/.git"
+          java -jar convert-tool/app/build/libs/recipes-converter-all.jar \
+                    --action convert --sourceAll recipes \
+                    --destination "$BRANCH_DIR" \
+                    --agpVersion "$AGP" --gradleVersion "$GRADLE" --overwrite
+          echo "Created recipes"
+          cd $BRANCH_DIR
+          find . -name gradlew | xargs chmod +x
+          git branch $BRANCH origin/$BRANCH || git branch $BRANCH
+          git reset $BRANCH
+          git checkout $BRANCH
+          git add -A
+          echo "Ready for commit"
+          git commit --message "Prepare release" || echo "Nothing to commit"
+          git push --set-upstream origin $BRANCH
+          echo "Done for $BRANCH"
+          cd ../main
+        done
+        cd ..
