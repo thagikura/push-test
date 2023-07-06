@@ -41,17 +41,18 @@ jobs:
           BRANCH+=${AGP::-2}
           BRANCH_DIR="../$BRANCH"
           echo $BRANCH_DIR
-          #git ls-remote --exit-code --heads git@github.com:${GITHUB_REPOSITORY}.git $BRANCH
-          git checkout $BRANCH || \
-            echo "$BRANCH doesn't exist on remote. Creating a new branch" && \
-            mkdir $BRANCH_DIR && \
-            cp -r .git "$BRANCH_DIR/.git"
+          mkdir $BRANCH_DIR
 
           java -jar convert-tool/app/build/libs/recipes-converter-all.jar \
                     --action convert --sourceAll recipes \
                     --destination "$BRANCH_DIR" \
                     --agpVersion "$AGP" --gradleVersion "$GRADLE" --overwrite
           echo "Created recipes"
+
+          git checkout $BRANCH && cp -r .git "$BRANCH_DIR/.git" || \
+            echo "$BRANCH doesn't exist on remote. Copying the history from main branch" && \
+            cp -r .git "$BRANCH_DIR/.git"
+
           cd $BRANCH_DIR
           find . -name gradlew | xargs chmod +x
           git branch $BRANCH origin/$BRANCH || git branch $BRANCH
