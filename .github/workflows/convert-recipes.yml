@@ -20,6 +20,7 @@ jobs:
        git config user.name "GitHub Actions"
     - name: Check existing branches
       run: |
+        cd main
         git fetch --all --depth=1
         git branch
     - name: Checkout and run build with Gradle Wrapper
