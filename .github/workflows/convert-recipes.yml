@@ -37,7 +37,10 @@ jobs:
           BRANCH+=${AGP::-2}
           BRANCH_DIR="../$BRANCH"
           echo $BRANCH_DIR
-          if [ git ls-remote --heads git@github.com:${GITHUB_REPOSITORY}.git $BRANCH | wc -l  ];then
+          git ls-remote --exit-code --heads git@github.com:${GITHUB_REPOSITORY}.git $BRANCH
+          repository_exists=$?
+          if [ "$repository_exists" = 0 ]; then
+            echo "$BRANCH existx on ${GITHUB_REPOSITORY}"
             git checkout $BRANCH
           else
             echo "$BRANCH doesn't exist on remote. Creating a new branch"
