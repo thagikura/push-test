@@ -63,9 +63,3 @@ tasks {
         from(sourcesMain.output)
     }
 }
-
-task("convertRecipe", JavaExec::class) {
-    group = "GradleRecipesTasks"
-    classpath = sourceSets["main"].runtimeClasspath
-    mainClass.set("com.google.android.gradle_recipe.converter.ConvertToolKt")
-}

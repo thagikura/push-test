@@ -1,11 +1,11 @@
 title = "perVariantManifestPlaceholder"
 
 description ="""
-  perVariantManifestPlaceholder recipe check for recipe change
+  perVariantManifestPlaceholder recipe
   """
 
 [agpVersion]
-min = "8.0.0-alpha10"
+min = "8.1.0-alpha01"
 
 # Relevant Gradle tasks to run per recipe
 [gradleTasks]
