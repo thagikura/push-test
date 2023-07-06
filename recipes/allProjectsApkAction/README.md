@@ -21,5 +21,3 @@ iterate over all sub-project "release" variant.
 The [AppProjectsApkTask.kt](build-logic/plugins/src/main/kotlin/AllProjectsApkTask.kt) is the "allProjectsAction" task implementation.
 
 To run the recipe : `gradlew allProjectsAction`
-
-
