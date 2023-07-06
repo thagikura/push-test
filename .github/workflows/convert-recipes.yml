@@ -18,6 +18,8 @@ jobs:
       run: |
        cd main
        git config user.name "GitHub Actions"
+    - name: Setup tmate session
+      uses: mxschmitt/action-tmate@v3
     - name: Check existing branches
       run: |
         cd main
