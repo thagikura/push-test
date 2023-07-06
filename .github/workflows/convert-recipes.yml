@@ -18,13 +18,7 @@ jobs:
       run: |
        cd main
        git config user.name "GitHub Actions"
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v3
-    - name: Check existing branches
-      run: |
-        cd main
-        git fetch --all --depth=1
-        git branch
+       git config user.email noreply@github.com
     - name: Checkout and run build with Gradle Wrapper
       run: |
         ls
@@ -44,17 +38,12 @@ jobs:
           BRANCH_DIR="../$BRANCH"
           echo $BRANCH_DIR
           mkdir $BRANCH_DIR
-
+          cp -r .git "$BRANCH_DIR/.git"
           java -jar convert-tool/app/build/libs/recipes-converter-all.jar \
                     --action convert --sourceAll recipes \
                     --destination "$BRANCH_DIR" \
                     --agpVersion "$AGP" --gradleVersion "$GRADLE" --overwrite
           echo "Created recipes"
-
-          git checkout $BRANCH && cp -r .git "$BRANCH_DIR/.git" || \
-            echo "$BRANCH doesn't exist on remote. Copying the history from main branch" && \
-            cp -r .git "$BRANCH_DIR/.git"
-
           cd $BRANCH_DIR
           find . -name gradlew | xargs chmod +x
           git branch $BRANCH origin/$BRANCH || git branch $BRANCH
