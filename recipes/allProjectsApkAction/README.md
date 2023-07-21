@@ -23,3 +23,4 @@ The [AppProjectsApkTask.kt](build-logic/plugins/src/main/kotlin/AllProjectsApkTa
 To run the recipe : `gradlew allProjectsAction`
 
 
+
